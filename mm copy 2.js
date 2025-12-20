@@ -5,28 +5,28 @@ require("dotenv").config();
    BNB CHAIN CONSTANTS
 ======================= */
 
-const RPC_URL = "https://bsc-dataseed.binance.org/"; // put the rpc url here//
+const RPC_URL = "https://bsc-dataseed.binance.org/";
 
-const WBNB = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"; // WBNB contract address
-const PANCAKE_ROUTER = "0x10ED43C718714eb63d5aA57B78B54704E256024E"; // PancakeSwap V2 Router
+const WBNB = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c";
+const PANCAKE_ROUTER = "0x10ED43C718714eb63d5aA57B78B54704E256024E";
 
 // 🔴 CHANGE TO YOUR TOKEN (BSC)
-const TOKEN = "0x485F66f20F6732017345ff3437377EC84Ea75039"; // SNA token address
+const TOKEN = "0x485F66f20F6732017345ff3437377EC84Ea75039";
 
 /* =======================
    TRADE CONFIG
 ======================= */
 
-const BUY_AMOUNT = ethers.parseEther("0.003"); // BNB per trade
+const BUY_AMOUNT = ethers.parseEther("0.0001"); // BNB per trade
 const SLIPPAGE = 10n; // 10%
-
+// const TRADE_INTERVAL = 60 * 60 * 1000; // 1 hour
 
 /* =======================
    PROVIDER & WALLET
 ======================= */
 
 const provider = new ethers.JsonRpcProvider(RPC_URL);
-const wallet = new ethers.Wallet(process.env.PRIVATE_KEY, provider); //env file 
+const wallet = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
 
 (async () => {
   const network = await provider.getNetwork();
@@ -101,53 +101,16 @@ async function buyTokens() {
 /* =======================
    SELL TOKENS
 ======================= */
-// previous code------------------
-// async function sellTokens(amountToSell) {
-//   console.log("🔴 SELLING TOKENS");
 
-//   const allowance = await token.allowance(
-//     wallet.address,
-//     PANCAKE_ROUTER
-//   );
-
-//   if (allowance < amountToSell) {
-//     console.log("🔓 Approving token...");
-//     const approveTx = await token.approve(
-//       PANCAKE_ROUTER,
-//       ethers.MaxUint256
-//     );
-//     await approveTx.wait();
-//   }
-
-//   const path = [TOKEN, WBNB];
-//   const deadline = Math.floor(Date.now() / 1000) + 300;
-
-//   const tx = await router.swapExactTokensForETHSupportingFeeOnTransferTokens(
-//     amountToSell,
-//     0, // tax-safe
-//     path,
-//     wallet.address,
-//     deadline
-//   );
-
-//   await tx.wait();
-//   console.log("✅ SELL TX:", tx.hash);
-// }
-// previous code end---------------------
-
-async function sellTokens() {
+async function sellTokens(amountToSell) {
   console.log("🔴 SELLING TOKENS");
 
-  const balance = await token.balanceOf(wallet.address);
+  const allowance = await token.allowance(
+    wallet.address,
+    PANCAKE_ROUTER
+  );
 
-  if (balance === 0n) {
-    console.log("⚠️ No tokens to sell");
-    return;
-  }
-
-  const allowance = await token.allowance(wallet.address, PANCAKE_ROUTER);
-
-  if (allowance < balance) {
+  if (allowance < amountToSell) {
     console.log("🔓 Approving token...");
     const approveTx = await token.approve(
       PANCAKE_ROUTER,
@@ -159,10 +122,9 @@ async function sellTokens() {
   const path = [TOKEN, WBNB];
   const deadline = Math.floor(Date.now() / 1000) + 300;
 
-  // ✅ TAX SAFE SELL (amountOutMin = 0)
   const tx = await router.swapExactTokensForETHSupportingFeeOnTransferTokens(
-    balance,
-    0,
+    amountToSell,
+    0, // tax-safe
     path,
     wallet.address,
     deadline
@@ -171,9 +133,6 @@ async function sellTokens() {
   await tx.wait();
   console.log("✅ SELL TX:", tx.hash);
 }
-
-
-
 
 /* =======================
    CHECK PRICE LOGIC
