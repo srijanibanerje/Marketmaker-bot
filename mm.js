@@ -258,7 +258,7 @@ async function checkPrice() {
 //   setInterval(checkPrice, TRADE_INTERVAL); // then every 1 hour
 // }, START_DELAY);
 const START_DELAY = 5000; // 5 seconds
-const TRADE_INTERVAL = 120000; // 2min 
+const TRADE_INTERVAL = 600000; // 2min 
 
 console.log("⏳ Bot will start in 5 seconds...");
 
