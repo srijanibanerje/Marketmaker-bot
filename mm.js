@@ -17,7 +17,7 @@ const TOKEN = "0x485F66f20F6732017345ff3437377EC84Ea75039"; // SNA token address
    TRADE CONFIG
 ======================= */
 
-const BUY_AMOUNT = ethers.parseEther("0.003"); // BNB per trade
+const BUY_AMOUNT = ethers.parseEther("0.011"); // BNB per trade
 const SLIPPAGE = 10n; // 10%
 
 
